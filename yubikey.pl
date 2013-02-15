@@ -21,6 +21,7 @@ our $client_id = 1;
 do "/etc/yubico/rlm/ykrlm-config.cfg";
 
 my $otp_len = 32 + $id_len;
+my $encryption_key = 0; #TODO: Generate a random key here.
 
 # Make sure the user has a valid YubiKey OTP
 sub authorize {
@@ -39,15 +40,24 @@ sub authorize {
 		$RAD_REQUEST{'User-Password'} = substr $RAD_REQUEST{'User-Password'}, 0, $password_len;
 	}
 
+	if(! $RAD_REQUEST{'State'} eq '') {
+		#Restore password from State
+		$RAD_REQUEST{'User-Password'} = decrypt_password($RAD_REQUEST{'State'});
+	}
+
 	my $username = $RAD_REQUEST{'User-Name'};
 
 	# Handle OTP
 	if($otp eq '') {
-		#No OTP, what to do?
+		# No OTP
 		if(requires_otp($username)) {
-			&radiusd::radlog(1, "Reject $username without OTP");
-			$RAD_REPLY{'Reply-Message'} = "Missing OTP!";
-			return RLM_MODULE_REJECT;
+		#	&radiusd::radlog(1, "Reject $username without OTP");
+		#	$RAD_REPLY{'Reply-Message'} = "Missing OTP!";
+		#	return RLM_MODULE_REJECT;
+			$RAD_REPLY{'State'} = encrypt_password($RAD_REQUEST{'User-Password'});
+			$RAD_REPLY{'Reply-Message'} = "Please provide YubiKey OTP";
+			$RAD_CHECK{'Response-Packet-Type'} = "Access-Challenge";
+			return RLM_MODULE_HANDLED;
 		} else {
 			# Allow login without OTP
 			&radiusd::radlog(1, "$username allowed with no OTP");
@@ -139,5 +149,22 @@ sub provision {
 	
 	#TODO: Insert provisioning logic here
 	&radiusd::radlog(1,"Provisioned $publicId to $username");
+}
+
+# Encrypts a password using an instance specific key
+sub encrypt_password {
+	my($plain) = @_;
+
+	#TODO: encrypt using $encryption_key
+	return $plain;
+}
+
+#Decrypts a password using an instance specific key
+sub decrypt_password {
+	my($cipher) = @_;
+
+	#TODO: decrypt using $encryption_key
+
+	return $cipher;
 }
 
