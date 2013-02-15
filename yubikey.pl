@@ -12,7 +12,12 @@ use constant	RLM_MODULE_NOOP=>      7;#  /* module succeeded without doing anyth
 use constant	RLM_MODULE_UPDATED=>   8;#  /* OK (pairs modified) */
 use constant	RLM_MODULE_NUMCODES=>  9;#  /* How many return codes there are */
 
-my $id_len = 12;
+# Default values
+our $id_len = 12;
+
+# Load user configuration
+do "/etc/yubico/rlm/ykrlm-config.cfg";
+
 my $otp_len = 32 + $id_len;
 
 # Make sure the user has a valid YubiKey OTP
