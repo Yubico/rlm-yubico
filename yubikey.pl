@@ -14,6 +14,8 @@ use constant	RLM_MODULE_NUMCODES=>  9;#  /* How many return codes there are */
 
 # Default values
 our $id_len = 12;
+our $verify_url = "http://127.0.0.1/wsapi/2.0/verify";
+our $client_id = 1;
 
 # Load user configuration
 do "/etc/yubico/rlm/ykrlm-config.cfg";
@@ -100,7 +102,10 @@ sub validate_otp {
 	my($otp) = @_;
 
 	#TODO: Validate the given OTP with the configured validation server
-	if($otp =~ /c$/) {
+	use LWP::Simple;
+	my $result = get("$verify_url?id=$client_id&nonce=akksfksfjshfksahfks&otp=$otp");
+
+	if($result =~ /status=OK/) {
 		return 1;
 	}
 
