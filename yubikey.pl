@@ -1,5 +1,6 @@
 use strict;
 use vars qw(%RAD_REQUEST %RAD_REPLY %RAD_CHECK);
+use Crypt::CBC;
 
 use constant    RLM_MODULE_REJECT=>    0;#  /* immediately reject the request */
 use constant	RLM_MODULE_FAIL=>      1;#  /* module failed, don't reply */
@@ -21,16 +22,21 @@ our $client_id = 1;
 do "/etc/yubico/rlm/ykrlm-config.cfg";
 
 my $otp_len = 32 + $id_len;
-my $encryption_key = 0; #TODO: Generate a random key here.
+
+my $key = Crypt::CBC->random_bytes(128);
+my $cipher = Crypt::CBC->new(
+   -key        => $key,
+   -cipher     => 'Blowfish',
+   -padding  => 'space',
+   -add_header => 1
+);
 
 # Make sure the user has a valid YubiKey OTP
 sub authorize {
 	# Extract OTP, if available
 	my $otp = '';
 
-	if($RAD_REQUEST{'YubiKey-OTP'} =~ /^[cbdefghijklnrtuv]{$otp_len}$/) {
-		$otp = $RAD_REQUEST{'YubiKey-OTP'};
-	} elsif($RAD_REQUEST{'User-Name'} =~ /[cbdefghijklnrtuv]{$otp_len}$/) {
+	if($RAD_REQUEST{'User-Name'} =~ /[cbdefghijklnrtuv]{$otp_len}$/) {
 		my $username_len = length($RAD_REQUEST{'User-Name'}) - $otp_len;
 		$otp = substr $RAD_REQUEST{'User-Name'}, $username_len;
 		$RAD_REQUEST{'User-Name'} = substr $RAD_REQUEST{'User-Name'}, 0, $username_len;
@@ -42,7 +48,9 @@ sub authorize {
 
 	if(! $RAD_REQUEST{'State'} eq '') {
 		#Restore password from State
-		$RAD_REQUEST{'User-Password'} = decrypt_password($RAD_REQUEST{'State'});
+		my $state = pack('H*', substr($RAD_REQUEST{'State'}, 2));
+		my $password = decrypt_password($state);
+		$RAD_REQUEST{'User-Password'} = $password;
 	}
 
 	my $username = $RAD_REQUEST{'User-Name'};
@@ -153,18 +161,15 @@ sub provision {
 
 # Encrypts a password using an instance specific key
 sub encrypt_password {
-	my($plain) = @_;
+	my($plaintext) = @_;
 
-	#TODO: encrypt using $encryption_key
-	return $plain;
+	return $cipher->encrypt($plaintext);
 }
 
 #Decrypts a password using an instance specific key
 sub decrypt_password {
-	my($cipher) = @_;
+	my($ciphertext) = @_;
 
-	#TODO: decrypt using $encryption_key
-
-	return $cipher;
+	return $cipher->decrypt($ciphertext);
 }
 
