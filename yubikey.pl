@@ -1,6 +1,7 @@
 use strict;
 use vars qw(%RAD_REQUEST %RAD_REPLY %RAD_CHECK);
 use Crypt::CBC;
+use Error qw(:try);
 
 use constant    RLM_MODULE_REJECT=>    0;#  /* immediately reject the request */
 use constant	RLM_MODULE_FAIL=>      1;#  /* module failed, don't reply */
@@ -35,7 +36,6 @@ my $cipher = Crypt::CBC->new(
 sub authorize {
 	# Extract OTP, if available
 	my $otp = '';
-
 	if($RAD_REQUEST{'User-Name'} =~ /[cbdefghijklnrtuv]{$otp_len}$/) {
 		my $username_len = length($RAD_REQUEST{'User-Name'}) - $otp_len;
 		$otp = substr $RAD_REQUEST{'User-Name'}, $username_len;
@@ -46,11 +46,16 @@ sub authorize {
 		$RAD_REQUEST{'User-Password'} = substr $RAD_REQUEST{'User-Password'}, 0, $password_len;
 	}
 
+	# Check for State, in the case of a previous Access-Challenge.
 	if(! $RAD_REQUEST{'State'} eq '') {
 		#Restore password from State
 		my $state = pack('H*', substr($RAD_REQUEST{'State'}, 2));
-		my $password = decrypt_password($state);
-		$RAD_REQUEST{'User-Password'} = $password;
+		try {
+			my $password = decrypt_password($state);
+			$RAD_REQUEST{'User-Password'} = $password;
+		} catch Error with {
+			#State not for us, ignore.
+		}
 	}
 
 	my $username = $RAD_REQUEST{'User-Name'};
@@ -59,9 +64,6 @@ sub authorize {
 	if($otp eq '') {
 		# No OTP
 		if(requires_otp($username)) {
-		#	&radiusd::radlog(1, "Reject $username without OTP");
-		#	$RAD_REPLY{'Reply-Message'} = "Missing OTP!";
-		#	return RLM_MODULE_REJECT;
 			$RAD_REPLY{'State'} = encrypt_password($RAD_REQUEST{'User-Password'});
 			$RAD_REPLY{'Reply-Message'} = "Please provide YubiKey OTP";
 			$RAD_CHECK{'Response-Packet-Type'} = "Access-Challenge";
