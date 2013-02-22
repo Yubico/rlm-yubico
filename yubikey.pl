@@ -1,5 +1,6 @@
 use strict;
 use vars qw(%RAD_REQUEST %RAD_REPLY %RAD_CHECK);
+use AnyEvent::Yubico;
 use Crypt::CBC;
 use Error qw(:try);
 
@@ -16,10 +17,11 @@ use constant	RLM_MODULE_NUMCODES=>  9;#  /* How many return codes there are */
 
 # Default values
 our $id_len = 12;
-our $verify_url = "http://127.0.0.1/wsapi/2.0/verify";
+our $verify_urls = [ "http://127.0.0.1/wsapi/2.0/verify" ];
 our $client_id = 1;
 our $api_key = "";
 our $allow_userless_login = 0;
+our $mapping_file = "/etc/yubico/rlm/ykmapping";
 
 # Load user configuration
 do "/etc/yubico/rlm/ykrlm-config.cfg";
@@ -30,9 +32,35 @@ my $key = Crypt::CBC->random_bytes(128);
 my $cipher = Crypt::CBC->new(
    -key        => $key,
    -cipher     => 'Blowfish',
-   -padding  => 'space',
+   -padding    => 'space',
    -add_header => 1
 );
+my $ykval = AnyEvent::Yubico->new({
+   client_id   => $client_id,
+   api_key     => $api_key,
+   urls        => $verify_urls
+});
+
+# Simple file based YubiKey mapping:
+my $mappingdata = {};
+open(my $info, $mapping_file);
+while(my $line = <$info>) {
+        chomp($line);
+        my ($username, $keystring) = split(/:/, $line, 2);
+        my @keys = split(/,/, $keystring);
+        $mappingdata->{$username} = \@keys;
+}
+
+sub has {
+        my($username, $key) = @_;
+        foreach my $x (@{$mappingdata->{$username}}) {
+                if( $x eq $key ) {
+                        return 1;
+		}
+        }
+        return 0;
+}
+
 
 # Make sure the user has a valid YubiKey OTP
 sub authorize {
@@ -135,28 +163,15 @@ sub requires_otp {
 sub validate_otp {
 	my($otp) = @_;
 
-	#TODO: Validate the given OTP with the configured validation server
-	use LWP::Simple;
-	my $result = get("$verify_url?id=$client_id&nonce=akksfksfjshfksahfks&otp=$otp");
-
-	if($result =~ /status=OK/) {
-		return 1;
-	}
-
-	return 0;
+	return $ykval->verify($otp);
 }
 
 # Checks if the given OTP comes from a YubiKey belonging to the 
 # given user.
 sub otp_belongs_to {
-	my($publicId, $username) = @_;
+	my($public_id, $username) = @_;
 
-	#TODO: Check if a YubiKey has been provisioned to the given user
-	if($publicId =~ /^dndndndndndn$/) {
-		return 1;
-	}
-
-	return 0;
+	return has($username, $public_id);
 }
 
 # Can we auto-provision the given YubiKey for the user?
@@ -164,7 +179,7 @@ sub can_provision {
 	my($publicId, $username) = @_;
 
 	#TODO: Insert logic for determining if a YubiKey can be provisioned here
-	return 1;
+	return 0;
 }
 
 # Provision the given YubiKey to the given user.
