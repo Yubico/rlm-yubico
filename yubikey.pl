@@ -97,11 +97,13 @@ sub authorize {
 			return RLM_MODULE_NOOP;
 		}
 	} elsif(validate_otp($otp)) {
+		&radiusd::radlog(1, "OTP is valid: $otp");
 		my $public_id = substr($otp, 0, $id_len);
 
 		#Lookup username if needed/allowed.
 		if($username eq '' and $allow_userless_login) {
 			$username = lookup_username($public_id);
+			&radiusd::radlog(1, "lookup of $public_id gave $username");
 			$RAD_REQUEST{'User-Name'} = $username;
 		}
 
@@ -168,7 +170,7 @@ sub decrypt_password {
 ###################
 
 # Simple file based YubiKey mapping:
-my $mappingdata = {};
+my $mapping_data = {};
 open(my $info, $mapping_file);
 while(my $line = <$info>) {
 	chomp($line);
@@ -176,7 +178,7 @@ while(my $line = <$info>) {
 
 	my ($username, $keystring) = split(/:/, $line, 2);
 	my @keys = split(/,/, $keystring);
-	$mappingdata->{$username} = \@keys;
+	$mapping_data->{$username} = \@keys;
 }
 
 # Check if a particular username requires an OTP to log in.
@@ -191,7 +193,7 @@ sub requires_otp {
 # given user.
 sub key_belongs_to {
 	my($public_id, $username) = @_;
-	foreach my $x (@{$mappingdata->{$username}}) {
+	foreach my $x (@{$mapping_data->{$username}}) {
 		if($x eq $public_id) {
 			return 1;
 		}
@@ -225,6 +227,6 @@ sub lookup_username {
 		}
 	}
 
-	return '';
+	return undef;
 }
 
