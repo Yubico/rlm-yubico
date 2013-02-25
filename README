@@ -18,7 +18,8 @@ Installation
 ------------
 
 TODO: Simplify installation.
- * Edit /etc/freeradius/modules/perl abd set module = <path to>/yubikey.pl
+ * Edit /etc/freeradius/modules/perl:
+   - Set module = /<path>/<to>/rlm_yubikey.pl
  * Edit /etc/freeradius/sites-available/default:
    - Add "perl" (without quotes) to a line by itself in the "authorize" 
      section. It needs to occur early on, at least before "files".
