@@ -1,0 +1,39 @@
+===========
+rlm_yubikey
+===========
+
+Module for FreeRADIUS for using YubiKeys for authentication.
+
+Introduction
+------------
+
+This is a rlm_perl based module for FreeRadius that allows adding
+authentication by YubiKey OTP (One Time Password). It works in addition
+to existing authentication methods, such as username and password. A 
+YubiKey OTP can be passed by appending it either to the username or the
+password. When possible, rlm_yubikey will use an Access-Challenge response 
+to query the user for an OTP if one is required but not provided.
+
+Installation
+------------
+
+TODO: Simplify installation.
+ * Edit /etc/freeradius/modules/perl abd set module = <path to>/yubikey.pl
+ * Edit /etc/freeradius/sites-available/default:
+   - Add "perl" (without quotes) to a line by itself in the "authorize" 
+     section. It needs to occur early on, at least before "files".
+   - Add "perl" to a line by itself in the "post-auth" section.
+ * Place configuration in /etc/yubico/rlm/ykrlm-config.cfg
+ * Place user - YubiKey mappings in /etc/yubico/rlm/ykmapping
+
+Dependencies
+------------
+
+rlm_yubikey requires the following Perl modules:
+AnyEvent::Yubico
+Crypt::CBC
+Digest::
+Error::
+Crypt::Blowfish
+
+FreeRADIUS is also required.
