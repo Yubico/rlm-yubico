@@ -17,13 +17,16 @@ to query the user for an OTP if one is required but not provided.
 Installation
 ------------
 
-TODO: Simplify installation.
+ * Run 'make install'
  * Edit /etc/freeradius/modules/perl:
-   - Set module = /<path>/<to>/rlm_yubikey.pl
+   - Set module = /usr/share/rlm_yubikey/rlm_yubikey.pl
  * Edit /etc/freeradius/sites-available/default:
    - Add "perl" (without quotes) to a line by itself in the "authorize" 
      section. It needs to occur early on, at least before "files".
    - Add "perl" to a line by itself in the "post-auth" section.
+ * Edit /etc/freeradius/dictionary:
+   - Add the following line:
+     $INCLUDE        /usr/share/rlm_yubikey/dictionary
  * Place configuration in /etc/yubico/rlm/ykrlm-config.cfg
  * Place user - YubiKey mappings in /etc/yubico/rlm/ykmapping
 

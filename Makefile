@@ -27,7 +27,8 @@
 
 VERSION = 0.5.0
 PACKAGE = rlm_yubikey
-CODE = Makefile COPYING rlm_yubikey.pl ykrlm-config.cfg ykmapping
+CODE = Makefile COPYING rlm_yubikey.pl ykrlm-config.cfg ykmapping \
+	dictionary
 
 all:
 	@echo "Try 'make install' or 'make symlink'."
@@ -41,6 +42,7 @@ usrprefix = /usr/share/rlm_yubikey
 
 install:
 	install -D rlm_yubikey.pl $(DESTDIR)$(usrprefix)/rlm_yubikey.pl
+	install -D dictionary $(DESTDIR)$(usrprefix)/dictionary
 	install -D --backup --mode 600 ykrlm-config.cfg $(DESTDIR)$(etcprefix)/ykrlm-config.cfg
 	install -D --backup --mode 600 ykmapping $(DESTDIR)$(etcprefix)/ykmapping
 
