@@ -184,9 +184,7 @@ while(my $line = <$info>) {
 # Check if a particular username requires an OTP to log in.
 sub requires_otp {
 	my($username) = @_;
-
-	#TODO: Check if the given user requires a valid OTP to authenticate.
-	return 1;
+	return exists($mapping_data->{$username});
 }
 
 # Checks if the given public id comes from a YubiKey belonging to the 
@@ -214,13 +212,12 @@ sub provision {
 	my($public_id, $username) = @_;
 	
 	#TODO: Insert provisioning logic here
-	&radiusd::radlog(1,"Provisioned $public_id to $username");
+	die(1,"Tried to provision $public_id to $username, but provisioning is not supported!");
 }
 
 sub lookup_username {
 	my($public_id) = @_;
 
-	#TODO: Lookup username for OTP
 	foreach my $user (keys $mapping_data) {
 		if(key_belongs_to($public_id, $user)) {
 			return $user;
