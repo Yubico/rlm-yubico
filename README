@@ -27,8 +27,12 @@ Installation
  * Edit /etc/freeradius/dictionary:
    - Add the following line:
      $INCLUDE        /usr/share/rlm_yubikey/dictionary
- * Place configuration in /etc/yubico/rlm/ykrlm-config.cfg
- * Place user - YubiKey mappings in /etc/yubico/rlm/ykmapping
+
+Configuration
+-------------
+
+Place configuration in /etc/yubico/rlm/ykrlm-config.cfg
+Place username -> YubiKey mappings in /etc/yubico/rlm/ykmapping
 
 Dependencies
 ------------
