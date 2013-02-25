@@ -2,7 +2,7 @@
 rlm_yubikey
 ===========
 
-Module for FreeRADIUS for using YubiKeys for authentication.
+FreeRADIUS module for using YubiKeys for authentication.
 
 Introduction
 ------------
