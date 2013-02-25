@@ -5,12 +5,13 @@ use AnyEvent::Yubico;
 use Crypt::CBC;
 use Error qw(:try);
 
-# Default values
+# Default configuration
 our $id_len = 12;
 our $verify_urls = [ "http://127.0.0.1/wsapi/2.0/verify" ];
 our $client_id = 1;
 our $api_key = "";
-our $allow_userless_login = 0;
+our $allow_userless_login = 1;
+our $allow_single_factor = 1;
 our $mapping_file = "/etc/yubico/rlm/ykmapping";
 
 # Load user configuration
@@ -85,7 +86,7 @@ sub authorize {
 			$RAD_REPLY{'Reply-Message'} = "Missing username and OTP!";
 			return RLM_MODULE_REJECT;
 
-		} elsif(requires_otp($username)) {
+		} elsif(!$allow_single_factor or requires_otp($username)) {
 			$RAD_REPLY{'State'} = encrypt_password($RAD_REQUEST{'User-Password'});
 			$RAD_REPLY{'Reply-Message'} = "Please provide YubiKey OTP";
 			$RAD_CHECK{'Response-Packet-Type'} = "Access-Challenge";
