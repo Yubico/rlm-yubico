@@ -218,6 +218,12 @@ sub lookup_username {
 	my($public_id) = @_;
 
 	#TODO: Lookup username for OTP
-	return "baduser";
+	foreach my $user (keys $mapping_data) {
+		if(key_belongs_to($public_id, $user)) {
+			return $user;
+		}
+	}
+
+	return '';
 }
 
