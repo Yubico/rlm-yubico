@@ -39,12 +39,13 @@ all:
 
 etcprefix = /etc/yubico/rlm
 usrprefix = /usr/share/rlm_yubikey
+radgroup = freerad
 
 install:
-	install -D rlm_yubikey.pl $(DESTDIR)$(usrprefix)/rlm_yubikey.pl
-	install -D dictionary $(DESTDIR)$(usrprefix)/dictionary
-	install -D --backup --mode 600 ykrlm-config.cfg $(DESTDIR)$(etcprefix)/ykrlm-config.cfg
-	install -D --backup --mode 600 ykmapping $(DESTDIR)$(etcprefix)/ykmapping
+	install -D --mode 644 rlm_yubikey.pl $(DESTDIR)$(usrprefix)/rlm_yubikey.pl
+	install -D --mode 644 dictionary $(DESTDIR)$(usrprefix)/dictionary
+	install -D --backup --group $(radgroup) --mode 640 ykrlm-config.cfg $(DESTDIR)$(etcprefix)/ykrlm-config.cfg
+	install -D --backup --group $(radgroup) --mode 640 ykmapping $(DESTDIR)$(etcprefix)/ykmapping
 
 $(PACKAGE)-$(VERSION).tar.gz: $(FILES)
 	mkdir $(PACKAGE)-$(VERSION)
