@@ -67,7 +67,7 @@ my $ykval = AnyEvent::Yubico->new({
 });
 
 use YKmap;
-YKmap->initialize({
+YKmap::initialize({
 	file => $mapping_file
 });
 
@@ -123,7 +123,7 @@ sub authorize {
 			&radiusd::radlog(1, "Reject: No username or OTP");
 			$RAD_REPLY{'Reply-Message'} = "Missing username and OTP!";
 			return RLM_MODULE_REJECT;
-		} elsif($security_level eq 2 or ($security_level eq 1 and YKmap->has_otp($username))) {
+		} elsif($security_level eq 2 or ($security_level eq 1 and YKmap::has_otp($username))) {
 			$RAD_REPLY{'State'} = encrypt_password($RAD_REQUEST{'User-Password'});
 			$RAD_REPLY{'Reply-Message'} = "Please provide YubiKey OTP";
 			$RAD_CHECK{'Response-Packet-Type'} = "Access-Challenge";
@@ -139,15 +139,15 @@ sub authorize {
 
 		#Lookup username if needed/allowed.
 		if($username eq '' and $allow_userless_login) {
-			$username = YKmap->lookup_username($public_id);
+			$username = YKmap::lookup_username($public_id);
 			&radiusd::radlog(1, "lookup of $public_id gave $username");
 			$RAD_REQUEST{'User-Name'} = $username;
 		}
 
-		if(YKmap->key_belongs_to($public_id, $username)) {
+		if(YKmap::key_belongs_to($public_id, $username)) {
 			&radiusd::radlog(1, "$username has valid OTP: $otp");
 			return RLM_MODULE_OK;
-		} elsif(YKmap->can_provision($public_id, $username)) {
+		} elsif(YKmap::can_provision($public_id, $username)) {
 			&radiusd::radlog(1, "Attempt to provision $public_id for $username post authentication");
 			$RAD_CHECK{'YubiKey-Provision'} = $public_id;
 			return RLM_MODULE_UPDATED;	
@@ -170,7 +170,7 @@ sub post_auth {
 	my $username = $RAD_REQUEST{'User-Name'};
 
 	if($public_id =~ /^[cbdefghijklnrtuv]{$id_len}$/) {
-		YKmap->provision($public_id, $username);
+		YKmap::provision($public_id, $username);
 	}
 
 	return RLM_MODULE_OK;
