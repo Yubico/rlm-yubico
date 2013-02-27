@@ -42,7 +42,7 @@ our $id_len = 12;
 our $verify_urls = [ "http://127.0.0.1/wsapi/2.0/verify" ];
 our $client_id = 1;
 our $api_key = "";
-our $allow_auto_provision = 1;
+our $allow_auto_provisioning = 1;
 our $allow_userless_login = 1;
 our $security_level = 0;
 our $mapping_file = undef;
@@ -147,7 +147,7 @@ sub authorize {
 		if(YKmap::key_belongs_to($public_id, $username)) {
 			&radiusd::radlog(1, "$username has valid OTP: $otp");
 			return RLM_MODULE_OK;
-		} elsif(YKmap::can_provision($public_id, $username)) {
+		} elsif($allow_auto_provisioning and YKmap::can_provision($public_id, $username)) {
 			&radiusd::radlog(1, "Attempt to provision $public_id for $username post authentication");
 			$RAD_CHECK{'YubiKey-Provision'} = $public_id;
 			return RLM_MODULE_UPDATED;	
