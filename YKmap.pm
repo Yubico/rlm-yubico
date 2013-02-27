@@ -98,6 +98,7 @@ sub provision {
 	if(open(MAP_FILE,">>$file")) {
 		print MAP_FILE "$username:$public_id\n"; 
 		close(MAP_FILE);
+		$mapping_data->{$username} = [$public_id];
 	} else {
 		warn("Unable to provision YubiKey: $public_id to $username!");
 	}
