@@ -39,9 +39,15 @@ use lib dirname(rel2abs($0));
 
 # Default configuration
 our $id_len = 12;
-our $verify_urls = [ "http://127.0.0.1/wsapi/2.0/verify" ];
-our $client_id = 1;
-our $api_key = "";
+our $verify_urls = [
+	"https://api.yubico.com/wsapi/2.0/verify",
+	"https://api2.yubico.com/wsapi/2.0/verify",
+	"https://api3.yubico.com/wsapi/2.0/verify",
+	"https://api4.yubico.com/wsapi/2.0/verify",
+	"https://api5.yubico.com/wsapi/2.0/verify"
+];
+our $client_id = 10549;
+our $api_key = "zeYjxHz+X/d12FAq0av4U9goZHY=";
 our $allow_auto_provisioning = 1;
 our $allow_userless_login = 1;
 our $security_level = 0;
