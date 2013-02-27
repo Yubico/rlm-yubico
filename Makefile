@@ -45,7 +45,7 @@ install:
 	install -D --mode 644 rlm_yubikey.pl $(DESTDIR)$(usrprefix)/rlm_yubikey.pl
 	install -D --mode 644 dictionary $(DESTDIR)$(usrprefix)/dictionary
 	install -D --backup --group $(radgroup) --mode 640 ykrlm-config.cfg $(DESTDIR)$(etcprefix)/ykrlm-config.cfg
-	install -D --backup --group $(radgroup) --mode 640 ykmapping $(DESTDIR)$(etcprefix)/ykmapping
+	install -D --backup --group $(radgroup) --mode 660 ykmapping $(DESTDIR)$(etcprefix)/ykmapping
 
 $(PACKAGE)-$(VERSION).tar.gz: $(FILES)
 	mkdir $(PACKAGE)-$(VERSION)

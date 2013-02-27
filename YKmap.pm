@@ -62,9 +62,11 @@ sub has_otp {
 # given user.
 sub key_belongs_to {
 	my($public_id, $username) = @_;
-	foreach my $x (@{$mapping_data->{$username}}) {
-		if($x eq $public_id) {
-			return 1;
+	if(exists($mapping_data->{$username})) {
+		foreach my $x (@{$mapping_data->{$username}}) {
+			if($x eq $public_id) {
+				return 1;
+			}
 		}
 	}
 	return 0;
