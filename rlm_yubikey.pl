@@ -73,9 +73,9 @@ my $ykval = AnyEvent::Yubico->new({
 });
 
 use YKmap;
-YKmap::initialize({
-	file => $mapping_file
-});
+if(defined $mapping_file) {
+	YKmap::set_file($mapping_file);
+}
 
 ########################
 # FreeRADIUS functions #

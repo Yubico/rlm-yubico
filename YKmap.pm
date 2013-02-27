@@ -28,17 +28,16 @@
 package YKmap;
 
 use strict;
+use Fcntl qw(:flock :seek);
 
-my $mapping_data = {};
-my $file = undef;
+my $file = '/etc/yubico/rlm/ykmapping';
 
-# Initialize: Read the file.
-sub initialize {
-	my $options = shift;
+sub set_file {
+	$file = shift;
+}
 
-	$mapping_data = {};
-	$file = $options->{file} // '/etc/yubico/rlm/ykmapping';
-
+sub _read_data {
+	my $data = {};
 	if(open(MAP_FILE, $file)) {
 		while(my $line = <MAP_FILE>) {
 			chomp($line);
@@ -46,27 +45,28 @@ sub initialize {
 
 			my ($username, $keystring) = split(/:/, $line, 2);
 			my @keys = split(/,/, $keystring);
-			$mapping_data->{$username} = \@keys;
+			$data->{$username} = \@keys;
 		}
 		close(MAP_FILE);
 	}
+	return $data;
 }
 
 # Check if a particular username has an OTP assigned to him/her.
 sub has_otp {
 	my($username) = @_;
-	return exists($mapping_data->{$username});
+	return exists(_read_data()->{$username});
 }
 
 # Checks if the given public id comes from a YubiKey belonging to the 
 # given user.
 sub key_belongs_to {
-	my($public_id, $username) = @_;
-	if(exists($mapping_data->{$username})) {
-		foreach my $x (@{$mapping_data->{$username}}) {
-			if($x eq $public_id) {
-				return 1;
-			}
+	my($public_id, $username, $data) = @_;
+	$data = _read_data() unless defined $data;
+
+	foreach my $x (@{$data->{$username}}) {
+		if($x eq $public_id) {
+			return 1;
 		}
 	}
 	return 0;
@@ -75,9 +75,10 @@ sub key_belongs_to {
 # Returns the username for the given YubiKey public ID.
 sub lookup_username {
 	my($public_id) = @_;
+	my $data = _read_data();
 
-	foreach my $user (keys $mapping_data) {
-		if(key_belongs_to($public_id, $user)) {
+	foreach my $user (keys $data) {
+		if(key_belongs_to($public_id, $user, $data)) {
 			return $user;
 		}
 	}
@@ -90,7 +91,7 @@ sub can_provision {
 	my($public_id, $username) = @_;
 
 	#TODO: Check if key is provisioned to someone else?
-	return not exists($mapping_data->{$username});
+	return not exists(_read_data()->{$username});
 }
 
 # Provision the given YubiKey to the given user.
@@ -98,9 +99,10 @@ sub provision {
 	my($public_id, $username) = @_;
 
 	if(open(MAP_FILE,">>$file")) {
+		flock(MAP_FILE, LOCK_EX);
+		seek(MAP_FILE, 0, SEEK_END); 
 		print MAP_FILE "$username:$public_id\n"; 
 		close(MAP_FILE);
-		$mapping_data->{$username} = [$public_id];
 	} else {
 		warn("Unable to provision YubiKey: $public_id to $username!");
 	}
