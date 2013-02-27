@@ -52,8 +52,8 @@ sub initialize {
 	}
 }
 
-# Check if a particular username requires an OTP to log in.
-sub requires_otp {
+# Check if a particular username has an OTP assigned to him/her.
+sub has_otp {
 	my($username) = @_;
 	return exists($mapping_data->{$username});
 }

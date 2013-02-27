@@ -42,8 +42,9 @@ our $id_len = 12;
 our $verify_urls = [ "http://127.0.0.1/wsapi/2.0/verify" ];
 our $client_id = 1;
 our $api_key = "";
+our $allow_auto_provision = 1;
 our $allow_userless_login = 1;
-our $allow_single_factor = 1;
+our $security_level = 0;
 our $mapping_file = undef;
 
 # Load user configuration
@@ -66,7 +67,7 @@ my $ykval = AnyEvent::Yubico->new({
 });
 
 use YKmap;
-YKMap->initialize({
+YKmap->initialize({
 	file => $mapping_file
 });
 
@@ -122,8 +123,7 @@ sub authorize {
 			&radiusd::radlog(1, "Reject: No username or OTP");
 			$RAD_REPLY{'Reply-Message'} = "Missing username and OTP!";
 			return RLM_MODULE_REJECT;
-
-		} elsif(!$allow_single_factor or YKmap->requires_otp($username)) {
+		} elsif($security_level eq 2 or ($security_level eq 1 and YKmap->has_otp($username))) {
 			$RAD_REPLY{'State'} = encrypt_password($RAD_REQUEST{'User-Password'});
 			$RAD_REPLY{'Reply-Message'} = "Please provide YubiKey OTP";
 			$RAD_CHECK{'Response-Packet-Type'} = "Access-Challenge";
