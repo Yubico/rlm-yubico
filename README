@@ -34,7 +34,10 @@ Configuration
 Place configuration in /etc/yubico/rlm/ykrlm-config.cfg
 Place username -> YubiKey mappings in /etc/yubico/rlm/ykmapping
 
-Any changes to configuration will require a rull restart of freeradius 
+See the included ykrlm-config.cfg file for a description of available 
+settings.
+
+Any changes to configuration will require a full restart of freeradius 
 to take effect. Even though freeradius supports reloading configuration
 without restarting (by sending a HUP signal), rlm_perl, which is used 
 by rlm_yubikey, does not.
