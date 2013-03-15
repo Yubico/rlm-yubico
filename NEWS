@@ -1,7 +1,4 @@
 * Version 0.5.1 (released 2013-03-15)
 
-  * Include (this) NEWS file in the release.
+  * Renamed rlm_yubikey to rlm_yubico.
 
-* Version 0.5.0 (released 2013-03-15)
-
-  * Initial release.
