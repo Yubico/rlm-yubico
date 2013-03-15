@@ -25,10 +25,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VERSION = 0.5.0
+VERSION = 0.5.1
 PACKAGE = rlm_yubikey
-CODE = Makefile COPYING rlm_yubikey.pl ykrlm-config.cfg ykmapping \
-       dictionary
+CODE = Makefile NEWS COPYING rlm_yubikey.pl ykrlm-config.cfg \
+       ykmapping dictionary
 TMPDIR = /tmp/tmp.rlm-yubikey
 
 all:
