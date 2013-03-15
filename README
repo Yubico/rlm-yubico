@@ -1,5 +1,5 @@
 ===========
-rlm_yubikey
+rlm_yubico
 ===========
 
 FreeRADIUS module for using YubiKeys for authentication.
@@ -11,7 +11,7 @@ This is a rlm_perl based module for FreeRadius that allows adding
 authentication by YubiKey OTP (One Time Password). It works in addition
 to existing authentication methods, such as username and password. A 
 YubiKey OTP can be passed by appending it either to the username or the
-password. When possible, rlm_yubikey will use an Access-Challenge response 
+password. When possible, rlm_yubico will use an Access-Challenge response 
 to query the user for an OTP if one is required but not provided.
 
 Installation
@@ -19,14 +19,14 @@ Installation
 
  * Run 'make install'
  * Edit /etc/freeradius/modules/perl:
-   - Set module = /usr/share/rlm_yubikey/rlm_yubikey.pl
+   - Set module = /usr/share/rlm_yubico/rlm_yubico.pl
  * Edit /etc/freeradius/sites-available/default:
    - Add "perl" (without quotes) to a line by itself in the "authorize" 
      section. It needs to occur early on, at least before "files".
    - Add "perl" to a line by itself in the "post-auth" section.
  * Edit /etc/freeradius/dictionary:
    - Add the following line:
-     $INCLUDE        /usr/share/rlm_yubikey/dictionary
+     $INCLUDE        /usr/share/rlm_yubico/dictionary
 
 Configuration
 -------------
@@ -40,10 +40,10 @@ settings.
 Any changes to configuration will require a full restart of freeradius 
 to take effect. Even though freeradius supports reloading configuration
 without restarting (by sending a HUP signal), rlm_perl, which is used 
-by rlm_yubikey, does not.
+by rlm_yubico, does not.
 
 **NOTE**: When running freeRADIUS (< 2.1.12) on a Debian based system, 
-you need  to preload Perl libraries for rlm_yubikey to work. This can 
+you need  to preload Perl libraries for rlm_yubico to work. This can 
 be done by running freeRADIUS using the following command (change the 
 version to match your Perl installation):
 
@@ -52,7 +52,7 @@ version to match your Perl installation):
 Dependencies
 ------------
 
-rlm_yubikey requires the following Perl modules:
+rlm_yubico requires the following Perl modules:
 AnyEvent::Yubico
 Crypt::CBC
 Digest::

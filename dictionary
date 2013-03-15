@@ -2,7 +2,7 @@
 #	YubiKey specific dictionary attributes. This file needs
 #	to be included in /etc/freeradius/dictionary like so:
 #
-#	$INCLUDE	/usr/share/rlm_yubikey/dictionary
+#	$INCLUDE	/usr/share/rlm_yubico/dictionary
 #
 
 ATTRIBUTE       YubiKey-Provision       3000    string

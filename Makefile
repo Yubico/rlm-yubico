@@ -26,24 +26,24 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 VERSION = 0.5.1
-PACKAGE = rlm_yubikey
-CODE = Makefile NEWS COPYING rlm_yubikey.pl ykrlm-config.cfg \
+PACKAGE = rlm_yubico
+CODE = Makefile NEWS COPYING rlm_yubico.pl ykrlm-config.cfg \
        ykmapping dictionary
-TMPDIR = /tmp/tmp.rlm-yubikey
+TMPDIR = /tmp/tmp.rlm-yubico
 
 all:
 	@echo "Try 'make install' or 'make symlink'."
-	@echo "Info: https://github.com/Yubico/rlm-yubikey/"
+	@echo "Info: https://github.com/Yubico/rlm-yubico/"
 	@exit 1
 
 # Installation rules.
 
 etcprefix = /etc/yubico/rlm
-usrprefix = /usr/share/rlm_yubikey
+usrprefix = /usr/share/rlm_yubico
 radgroup = freerad
 
 install:
-	install -D --mode 644 rlm_yubikey.pl $(DESTDIR)$(usrprefix)/rlm_yubikey.pl
+	install -D --mode 644 rlm_yubico.pl $(DESTDIR)$(usrprefix)/rlm_yubico.pl
 	install -D --mode 644 dictionary $(DESTDIR)$(usrprefix)/dictionary
 	install -D --backup --group $(radgroup) --mode 640 ykrlm-config.cfg $(DESTDIR)$(etcprefix)/ykrlm-config.cfg
 	install -D --backup --group $(radgroup) --mode 660 ykmapping $(DESTDIR)$(etcprefix)/ykmapping
