@@ -84,7 +84,7 @@ release: dist
 	git add releases/$(PACKAGE)-$(VERSION).tar.gz.sig
 	rmdir --ignore-fail-on-non-empty $(TMPDIR)
 
-	x=$$(ls -1v releases/*.tar.gz | awk -F\- '{print $$2}' \
+	x=$$(ls -1v releases/$(PACKAGE)-*.tar.gz | awk -F\- '{print $$2}' \
 	  | sed 's/.tar.gz//' | paste -sd ',' - | sed 's/,/, /g' \
 	  | sed 's/\([0-9.]\{1,\}\)/"\1"/g');sed -i -e "2s/\[.*\]/[$$x]/" \
 	  releases.html
