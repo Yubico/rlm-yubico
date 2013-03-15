@@ -28,7 +28,8 @@
 VERSION = 0.5.0
 PACKAGE = rlm_yubikey
 CODE = Makefile COPYING rlm_yubikey.pl ykrlm-config.cfg ykmapping \
-	dictionary
+       dictionary
+TMPDIR = /tmp/tmp.rlm-yubikey
 
 all:
 	@echo "Try 'make install' or 'make symlink'."
@@ -55,3 +56,39 @@ $(PACKAGE)-$(VERSION).tar.gz: $(FILES)
 	rm -rf $(PACKAGE)-$(VERSION)
 
 dist: $(PACKAGE)-$(VERSION).tar.gz
+
+release: dist
+	@if test -z "$(KEYID)"; then \
+		echo "Try this instead:"; \
+		echo "  make release KEYID=[PGPKEYID]"; \
+		echo "For example:"; \
+		echo "  make release KEYID=2117364A"; \
+		exit 1; \
+		fi
+	@head -1 NEWS | grep -q "Version $(VERSION) (released `date -I`)" || \
+		(echo 'error: You need to update date/version in NEWS'; exit 1)
+	gpg --detach-sign --default-key $(KEYID) $(PACKAGE)-$(VERSION).tar.gz
+	gpg --verify $(PACKAGE)-$(VERSION).tar.gz.sig
+
+	git tag -u $(KEYID) -m "$(PACKAGE)-$(VERSION)" $(PACKAGE)-$(VERSION)
+	git push
+	git push --tags
+	mkdir -p $(TMPDIR)
+	mv $(PACKAGE)-$(VERSION).tar.gz $(TMPDIR)
+	mv $(PACKAGE)-$(VERSION).tar.gz.sig $(TMPDIR)
+
+	git checkout gh-pages
+	mv $(TMPDIR)/$(PACKAGE)-$(VERSION).tar.gz releases/
+	mv $(TMPDIR)/$(PACKAGE)-$(VERSION).tar.gz.sig releases/
+	git add releases/$(PACKAGE)-$(VERSION).tar.gz
+	git add releases/$(PACKAGE)-$(VERSION).tar.gz.sig
+	rmdir --ignore-fail-on-non-empty $(TMPDIR)
+
+	x=$$(ls -1v releases/*.tar.gz | awk -F\- '{print $$3}' \
+	  | sed 's/.tar.gz//' | paste -sd ',' - | sed 's/,/, /g' \
+	  | sed 's/\([0-9.]\{1,\}\)/"\1"/g');sed -i -e "2s/\[.*\]/[$$x]/" \
+	  releases.html
+	git add releases.html
+	git commit -m "Added tarball for release $(VERSION)"
+	git push
+	git checkout master
