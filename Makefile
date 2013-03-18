@@ -25,10 +25,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VERSION = 0.5.1
+VERSION = 0.5.2
 PACKAGE = rlm_yubico
 CODE = Makefile NEWS COPYING rlm_yubico.pl ykrlm-config.cfg \
-       ykmapping dictionary
+       YKmap.pm ykmapping dictionary
 TMPDIR = /tmp/tmp.rlm-yubico
 
 all:
@@ -44,6 +44,7 @@ radgroup = freerad
 
 install:
 	install -D --mode 644 rlm_yubico.pl $(DESTDIR)$(usrprefix)/rlm_yubico.pl
+	install -D --mode 644 YKmap.pm $(DESTDIR)$(usrprefix)/YKmap.pm
 	install -D --mode 644 dictionary $(DESTDIR)$(usrprefix)/dictionary
 	install -D --backup --group $(radgroup) --mode 640 ykrlm-config.cfg $(DESTDIR)$(etcprefix)/ykrlm-config.cfg
 	install -D --backup --group $(radgroup) --mode 660 ykmapping $(DESTDIR)$(etcprefix)/ykmapping

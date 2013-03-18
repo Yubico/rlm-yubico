@@ -1,3 +1,7 @@
+* Version 0.5.2 (released 2013-03-18)
+
+  * Added YKmap.pm to Makefile (which was missing).
+
 * Version 0.5.1 (released 2013-03-15)
 
   * Renamed rlm_yubikey to rlm_yubico.
