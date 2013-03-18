@@ -25,7 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VERSION = 0.5.2
+VERSION = 0.5.3
 PACKAGE = rlm_yubico
 CODE = Makefile NEWS COPYING rlm_yubico.pl ykrlm-config.cfg \
        YKmap.pm ykmapping dictionary
@@ -39,7 +39,7 @@ all:
 # Installation rules.
 
 etcprefix = /etc/yubico/rlm
-usrprefix = /usr/share/rlm_yubico
+usrprefix = /usr/share/rlm-yubico
 radgroup = freerad
 
 install:

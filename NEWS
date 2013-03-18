@@ -1,3 +1,8 @@
+* Version 0.5.3 (released 2013-03-18)
+
+  * Install files into /usr/share/rlm-yubico instead of
+    /usr/share/rlm_yubico.
+
 * Version 0.5.2 (released 2013-03-18)
 
   * Added YKmap.pm to Makefile (which was missing).
