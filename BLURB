@@ -1,0 +1,7 @@
+Author: Yubico
+Basename: rlm-yubico
+Homepage: http://opensource.yubico.com/rlm-yubico/
+License: BSD-2-Clause
+Name: rlm-yubico
+Project: rlm-yubico
+Summary: FreeRADIUS module for using YubiKeys for authentication
