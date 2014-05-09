@@ -1,5 +1,5 @@
 # Maps usernames to YubiKeys.
-# Each line should contain a username followed by a :, then collowed by a
+# Each line should contain a username followed by a :, then followed by a
 # comma separated list of YubiKey public IDs.
 #
 # For example:
