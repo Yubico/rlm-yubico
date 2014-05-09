@@ -77,7 +77,7 @@ sub lookup_username {
 	my($public_id) = @_;
 	my $data = _read_data();
 
-	foreach my $user (keys $data) {
+	foreach my $user (keys %$data) {
 		if(key_belongs_to($public_id, $user, $data)) {
 			return $user;
 		}
