@@ -1,11 +1,8 @@
-===========
-rlm_yubico
-===========
+== rlm_yubico
 
 FreeRADIUS module for using YubiKeys for authentication.
 
-Introduction
-------------
+=== Introduction
 
 This is a rlm_perl based module for FreeRadius that allows adding
 authentication by YubiKey OTP (One Time Password). It works in addition
@@ -14,8 +11,7 @@ YubiKey OTP can be passed by appending it either to the username or the
 password. When possible, rlm_yubico will use an Access-Challenge response 
 to query the user for an OTP if one is required but not provided.
 
-Installation
-------------
+=== Installation
 
  * Run 'make install'
  * Edit /etc/freeradius/modules/perl:
@@ -28,8 +24,7 @@ Installation
    - Add the following line:
      $INCLUDE        /usr/share/rlm_yubico/dictionary
 
-Configuration
--------------
+=== Configuration
 
 Place configuration in /etc/yubico/rlm/ykrlm-config.cfg
 Place username -> YubiKey mappings in /etc/yubico/rlm/ykmapping
@@ -49,8 +44,7 @@ version to match your Perl installation):
 
   LD_PRELOAD=/usr/lib/libperl.so.5.10 freeradius
 
-Dependencies
-------------
+=== Dependencies
 
 rlm_yubico requires the following Perl modules:
 AnyEvent::Yubico
