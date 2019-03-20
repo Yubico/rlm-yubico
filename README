@@ -1,5 +1,7 @@
 == rlm_yubico
 
+NOTE: This project is deprecated and is no longer being maintained.
+
 FreeRADIUS module for using YubiKeys for authentication.
 
 === Introduction
